@@ -1,0 +1,392 @@
+<!doctype>
+<!--[if lt IE 7]>  class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>     class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>     class="no-js ie8 oldie" lang="en"> <![endif]-->
+<head itemscope itemtype="http://schema.org/Book">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  {% include "metadata.html" %}
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link type="text/css" href="/static/css/jquery.jscrollpane.css" rel="stylesheet" media="all" />
+  <!-- end CSS-->
+
+  <script src="/static/js/libs/modernizr-2.0.6.min.js"></script>
+
+  <style>
+  
+  @import url(http://fonts.googleapis.com/css?family=Arvo:700);
+  @import url(http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic);
+
+  
+  body {
+  	  font-family: 'PT Serif', serif;
+  }
+  header, footer {
+  	  background-color: black;
+  	  color: white;
+  }
+  header {
+  	  padding: 1em;
+  	  text-align: center;
+  }
+  header h1 {
+  	  margin: 0;
+  	  font-size: {% if page %}22pt{% else %}30pt{% endif %};
+  	  font-family: 'Arvo', serif;
+  	  letter-spacing: 1px;
+  }
+  header h2 {
+  	  margin: 10px 0 0 2px;
+  	  font-size: 13pt;
+  	  font-weight: normal;
+  }
+  header h2 a {
+  	  color: black;
+  }
+  header a, header a:visited {
+  	  color: #EEF;
+  }
+  header a {
+  	  text-decoration: none;
+  }
+  header a:hover {
+  	  text-decoration: underline;
+  }
+  #main {
+  	  background-color: white;
+  	  border-top: 1px solid #DDD;
+  	  border-bottom: 1px solid #DDD;
+  }
+  #toc {
+  	  width: 230px;
+  	  height: 100%;
+  	  float: left;
+  	  overflow: auto;
+  	  padding: 0 20px 0 1em;
+  	  border-right: 1px solid #DDD;
+  	  background: #444;
+  	  color: #EEE;
+  	  font-size: 12px;
+  }
+  #toc ul {
+  	  margin: 0;
+  	  padding: 0;
+  }
+  #toc li {
+  	  list-style-type: none;
+  	  margin-bottom: .25em;
+  }
+  #toc li.active {
+  	  background: #666;
+  	  font-weight: bold;
+  	  padding: 2px;
+  }
+  #toc a {
+  	  color: #EEE;
+  	  text-decoration: none;
+  }
+  #toc a:hover {
+  	  color: #FFF;
+  	  text-decoration: underline;
+  }
+  #toc span.num {
+  	  color: #DDD;
+  }
+  #main #content-frame {
+  	  float: left;
+  	  height: 100%;
+  }
+  #content {
+  	  overflow: auto;
+  	  font-size: 10.5pt;
+  	  line-height: 140%;
+  	  text-align: justify;
+  	  padding: 1.5em 15px 2.5em 25px;
+  	  margin-right: 40px;
+  }
+  #content .footnotes {
+  	  margin-top: 15px;
+  	  border-top: 1px solid black;
+  	  padding-top: 10px;
+  	  font-size: 9pt;
+  }
+  #content .footnote_entry {
+  	  display: block;
+  }
+  #nav {
+  	  height: 2em;
+  	  border-top: 1px solid #DDD;
+  	  padding: .5em 1em .5em 1em;
+  	  vertical-align: middle;
+  }
+  #nav .prev, #nav .next {
+  	  width: 50%;
+  	  height: 100%;
+  }
+  #nav .next {
+  	  float: right;
+  	  text-align: right;
+  }
+  #nav a {
+  	  color: black;
+  	  text-decoration: none;
+  }
+  #nav a:hover {
+  	  text-decoration: underline;
+  }
+  #tools {
+  	  float: left;
+  	  width: 160px;
+  	  height: 100%;
+  	  border-left: 1px solid #DDD;
+  }
+  #tools .padder {
+  	  margin: .5em 5px 0 10px;
+  }
+  #tools .comments {
+  	  cursor: pointer;
+  	  margin: 20px 0 25px 0;
+  }
+  .fb-like {
+  	  margin-top: 15px;
+  	  margin-bottom: 15px;
+  }
+  #tools .maillist {
+  	  margin-top: 25px;
+  }
+  footer {
+  	  padding: 1em;
+  }
+  footer a, footer a:visited {
+  	  color: white;
+  }
+  footer div.copyright {
+  	  font-size: 12px;
+  }
+  #comments .close {
+  	  padding: 3px;
+  	  font-family: Arial, sans-serif;
+  	  cursor: pointer;
+  	  text-align: right;
+  }
+  
+  #content p.indent {
+  	  text-indent: 1.5em;
+  }
+  #content li p.indent {
+  	  text-indent: 0;
+  }
+  #content .figure {
+  	  margin: 2em;
+  }
+  #content .figure table {
+  	  border: 1px solid black;
+  }
+  #content .figure table td {
+  	  border: 1px solid black;
+  	  padding: 2px;
+  	  font-size: 10.5pt;
+  }
+  #content .footnote_marker {
+  	  /* Chrome is messing up position: relative */
+  	  font-size: 85%;
+  	  padding: 3px;
+  	  color: #555;
+  }
+  
+  #toc .jspVerticalBar { display: none; }
+  #toc .jspContainer:hover .jspVerticalBar { display: block; }
+  
+  </style>
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+    	{% include "header.html" %}
+    </header>
+    <div id="main" role="main">
+    	<div id="toc">
+    		<h2>Table of Contents</h2>
+    		<ul>
+    			<li><a href="/">Home</a></li>
+    			{% for entry in toc %}
+    				<li style="margin-left: {{entry.indent|add:-1}}em" {% if page.href == entry.href %}class="active"{% endif %}><a href="{{entry.href}}">{% if entry.number != "prologue" %}<span class="num">{{entry.number}}.</span> {% endif %}{{entry.name}}</a></li>
+    				
+    				{% for e2 in entry.extraneous_entries %}
+						<li style="margin-left: {{e2.indent|add:-1}}em"><span class="num">{{e2.number}}.</span>  {{e2.name}}</li>
+    				{% endfor %}
+    			{% endfor %}
+			</ul>
+
+    	</div>
+    	
+    	<div id="content-frame">
+    		<div id="content">
+    			<div class="wrapper">
+    				{% if page %}
+    					{{page.content|safe}}
+    				{% else %}
+    					{% include "home.html" %}
+    				{% endif %}
+    			</div>
+    		</div>
+    		<div id="nav">
+    			{% if prev %}<a class="prev" href="{{prev.href}}">{{prev.name}}</a>{% endif %}
+    			{% if next %}<a class="next" href="{{next.href}}">{{next.name}}</a>{% endif %}
+    		</div>
+    	</div>
+    	
+		<div id="tools">
+			<div class="padder">
+				<div class="comments">
+					Read <fb:comments-count href="http://{{host}}"/></fb:comments-count> comments or add a comment on this
+					book.
+				</div>
+	
+				<a href="https://twitter.com/intent/tweet?button_hashtag={{hashtag|urlencode}}&text={{tweet|urlencode}}" class="twitter-hashtag-button" data-related="{{related_twitter_handle}}" data-url="http://{{host}}">Tweet #{{hashtag}}</a>
+				
+				<div class="fb-like" data-send="false" data-layout="button_count" data-width="133" data-show-faces="false" data-action="like" data-font="verdana"></div>
+				
+				<div class="g-plusone"></div>
+				
+				{% if google_group_name %}
+				<div class="maillist">Subscribe to updates to the book:</div>
+				<form action="http://groups.google.com/group/{{google_group_name}}/boxsubscribe">
+				<input type="text" name="email" placeholder="youremail@address.com" style="width: 130px; font-size: 11px;"/> 
+				<input type="submit" name="sub" value="Subscribe" style="font-size: 11px;"/>
+				<a href="http://groups.google.com/group/{{google_group_name}}">
+				<img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif" height="13" width="60" alt="Google Groups">
+				</a>
+				</form>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	
+    <footer>
+    	{% include "footer.html" %}
+    </footer>
+
+	<div id="comments" style="display: none; position: absolute; width: 440px; background-color: white; border: 1px solid black;">
+		<div class="close">CLOSE</div>
+		<div class="fb-comments" data-href="http://{{host}}" data-num-posts="3" data-width="440"></div>
+	</div>
+   </div> <!--! end of #container -->
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/static/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+
+
+  <script defer src="/static/js/plugins.js"></script>
+  <script defer src="/static/js/script.js"></script>
+
+  <script type="text/javascript" src="/static/js/jquery.mousewheel.js"></script>
+  <script type="text/javascript" src="/static/js/jquery.jscrollpane.min.js"></script>
+
+
+  {% if google_analytics_id %}
+  <script>
+    window._gaq = [['_setAccount','{{google_analytics_id|urlencode|escapejs}}'],['_trackPageview'],['_trackPageLoadTime']];
+    Modernizr.load({
+      load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
+    });
+  </script>
+  {% endif %}
+  
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=(document.location.protocol == "file:" ? "http:" : "") +"//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+				
+	{% if facebook_app_id %}
+    <div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = (document.location.protocol == "file:" ? "http:" : "") + "//connect.facebook.net/en_US/all.js#xfbml=1&appId={{facebook_app_id|urlencode|escapejs}}";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
+	{% endif %}
+
+	<script type="text/javascript">
+	  (function() {
+		var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+		po.src = 'https://apis.google.com/js/plusone.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  })();
+	</script>
+	
+  <script>
+function layout() {
+	var header = $('header');
+	var main = $('#main');
+	var footer = $('footer');
+	main.css({height: $(window).height() - header.outerHeight() - footer.outerHeight() - 2 });
+	
+	var toc = $('#toc');
+	var contentframe = $('#content-frame');
+	var tools = $('#tools');
+	contentframe.css({width: $(window).width() - toc.outerWidth() - tools.outerWidth()});
+	
+	$('#content').css({height: contentframe.height() - $('#nav').outerHeight() });
+	
+	// from jscrollpage
+	if ($.browser.msie) {
+		if (!throttleTimeout) {
+			throttleTimeout = setTimeout(
+				function()
+				{
+					$('#toc, #content').each(function() { $(this).data('jsp').reinitialise(); });
+					throttleTimeout = null;
+				},
+				50
+			);
+		}
+	} else {
+		$('#toc, #content').each(function() { $(this).data('jsp').reinitialise(); });
+	}
+	
+}
+
+$(document).ready(function() {
+   $('#toc, #content').jScrollPane();
+   layout();
+   $(window).resize(layout);
+   setTimeout("layout()", 1000);
+     
+   // move footnotes from inline to the bottom
+   
+   var fn = null;
+   $('#content .footnote_entry').each(function() {
+   		   if (!fn) {
+   		   	   fn = $('<div class="footnotes"/>');
+   		   	   $('#content .wrapper').append(fn);
+   		   }
+   		   
+   		   fn.append($(this));
+   		   $(this).show();
+   });
+   
+   // interactivity
+   
+   $('#tools .comments').click(function() {
+   		$("#comments").css({
+   			height: .8*$(window).height(),
+   			top: .1*$(window).height(),
+   			left: $(window).width()
+   		});
+   		$("#comments").show().animate({ left: $(window).width() - $("#comments").outerWidth() });
+   });
+   $('#comments .close').click(function() {
+   		$("#comments").animate({ left: $(window).width() }).fadeOut();
+   });
+});
+ </script>
+</body>
+

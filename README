@@ -1,0 +1,73 @@
+PubMyBook
+=========
+
+This is a Django site to publish a book online, converting LaTeX into HTML.
+
+Dependencies
+------------
+	poppler-utils
+
+Configuration
+-------------
+
+Put your LaTeX source files in:
+	
+	books/mybook
+	
+	i.e.:
+		books/mybook/book.tex (must be named book.tex)
+		books/mybook/figure1.png
+
+Create the following files in this directory:
+	
+settings_local.py
+-----------------
+SECRET_KEY = "something long and random, see Django for details"
+DEFAULT_BOOK = "mybook"	 				# root directory of book content
+HASHTAG = "myhashtag"					# suggested hashtag, no #-sign
+TWEET = "What a great book."			# suggested tweet
+RELATED_TWITTER_HANDLE = "YourHandle"	# your twitter handle, no @-sign
+GOOGLE_GROUP_NAME = "opengovdatabook"	# name of your Google Group
+GOOGLE_ANALYTICS_ID = "UAXXXXXXXX1"		# your Google Analytics ID
+FACEBOOK_APP_ID = "119329904748946"		# your Facebook App ID
+
+You may also specify chapters to embargo (hide from the site) using the chapter
+numbers, e.g.:
+	
+	EMBARGO_CHAPTERS = { "mybook": (2, 3, 4) }
+
+metadata.html
+-------------
+<!-- HTML Metadata -->
+<title>Your Book Title</title>
+<meta name="description" content="Your Book Description">
+<meta name="author" content="Your Name">
+
+<!-- Facebook Graph -->
+<meta property="og:title" content="Your Book Title" />
+<meta property="og:type" content="book" />
+<meta property="og:url" content="Your Book URL" />
+<meta property="og:image" content="Your Book Cover Image" />
+<meta property="og:site_name" content="Your Site Name" />
+<meta property="fb:admins" content="Facebook User ID to Admin the Page" />  
+
+<!-- Google Plus Metadata -->
+<meta itemprop="name" content="Your Book Name">
+<meta itemprop="description" content="Your Book Description">
+
+header.html
+-----------
+<h1>My Book</h1>
+<h2>Subtitle subtitle subtitle subtitle</h2>
+<h2>By Your Name</h2>
+
+footer.html
+-----------
+<div class="copyright">Copyright &copy; 2012 Your Name</div>
+
+home.html
+---------
+<div style="padding: 2em 3em 2em 2em">
+	<p>This book is the culmination of much work.</p>
+</div>
+
