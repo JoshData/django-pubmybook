@@ -5,7 +5,9 @@ This is a Django site to publish a book online, converting LaTeX into HTML.
 
 Dependencies
 ------------
-	poppler-utils
+	Django 1.3 or later
+	python-plastex (to read LaTeX files)
+	poppler-utils (to convert .pdf figures to images)
 
 Configuration
 -------------
@@ -20,8 +22,7 @@ Put your LaTeX source files in:
 
 Create the following files in this directory:
 	
-settings_local.py
------------------
+settings_local.py:
 SECRET_KEY = "something long and random, see Django for details"
 DEFAULT_BOOK = "mybook"	 				# root directory of book content
 HASHTAG = "myhashtag"					# suggested hashtag, no #-sign
@@ -36,8 +37,7 @@ numbers, e.g.:
 	
 	EMBARGO_CHAPTERS = { "mybook": (2, 3, 4) }
 
-metadata.html
--------------
+metadata.html:
 <!-- HTML Metadata -->
 <title>Your Book Title</title>
 <meta name="description" content="Your Book Description">
@@ -55,19 +55,26 @@ metadata.html
 <meta itemprop="name" content="Your Book Name">
 <meta itemprop="description" content="Your Book Description">
 
-header.html
------------
+header.html:
 <h1>My Book</h1>
 <h2>Subtitle subtitle subtitle subtitle</h2>
 <h2>By Your Name</h2>
 
-footer.html
------------
+footer.html:
 <div class="copyright">Copyright &copy; 2012 Your Name</div>
 
-home.html
----------
+home.html:
 <div style="padding: 2em 3em 2em 2em">
 	<p>This book is the culmination of much work.</p>
 </div>
+
+Running The Site
+----------------
+
+Check that the site works locally with:
+	
+	python manage.py runserver
+	
+The first time a page is hit, the LaTeX source file will be processed. For large
+documents, this can take a little while.
 
