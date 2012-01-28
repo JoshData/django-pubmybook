@@ -1,0 +1,340 @@
+/* @override http://opengovdata.io/static/css/local.css */
+@import url(http://fonts.googleapis.com/css?family=Lora);
+@import url(http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic);
+@import url(http://fonts.googleapis.com/css?family=Telex);
+@import url(http://fonts.googleapis.com/css?family=Montserrat);
+/* link color: #83AF9B; _NO__DOTCOMMA__AFTER__*/
+body {
+    font-family: 'Gudea', serif
+}
+header, footer, #toc {
+    background-color: #FDF8EC;
+    color: #404045;
+}
+header {
+    padding: 1em;
+    text-align: center;
+}
+p {
+    font-size: 13px;
+    font-family: 'Telex', sans-serif;
+    font-weight: 500;
+    line-height: 1.8em;
+    color: #555555;
+}
+#toc {
+    width: 230px;
+    height: 100%;
+    float: left;
+    overflow: auto;
+    padding: 0 20px 0 1em;
+    font-size: 12px;
+}
+	#toc ul {
+	    margin: 0;
+	    padding: 0;
+	}
+	#toc li {
+	    list-style-type: none;
+	    margin-bottom: .25em;
+	    font-family: 'Telex', sans-serif;
+	    margin-bottom: 10px;
+	}
+	#toc li.active {
+	    background: #EEE;
+	    border: 1px solid #FFF;
+	    font-weight: bold;
+	    padding: 2px;
+	}
+	#toc a {
+	    color: #687;
+	    text-decoration: none;
+	}
+	#toc a:hover {
+	    color: #466c5b;
+	    text-decoration: none;
+	}
+	#toc span.num {
+	    color: #444
+	}
+	#toc h2 {
+	    font-size: 20px;
+	    font-family: 'Montserrat', san-serif;
+	    color: #556270;
+	}
+#content-frame {
+    float: left;
+    width: 640px; /* initial width before javascript sets the proper width */
+    height: 100%;
+    /* border-left: 1px solid black;;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;*/
+}
+#content {
+    background: white;
+    overflow: auto;
+    font-size: 10.5pt;
+    line-height: 140%;
+    text-align: justify;
+    padding: 1.5em 15px 2.5em 25px;
+    margin-right: 40px;
+}
+	#content .footnotes {
+	    margin-top: 15px;
+	    border-top: 2px solid #AAA;
+	    padding-top: 10px;
+	    font-size: 9pt;
+	}
+	#content .footnote_entry {
+	    display: block;
+	    font-family: 'Telex', sans-serif;
+	}
+		#content .footnote_entry a {
+		    color: #83AF9B
+		}
+		#content .footnote_entry a:hover {
+		    color: #466c5b
+		}
+	#content h4 {
+	    font-size: 16px;
+	    font-family: 'Montserrat', san-serif;
+	    color: #C44D58;
+	    text-transform: uppercase;
+	    border-bottom: 2px solid #555555;
+	    padding-bottom: 8px;
+	}
+#nav {
+    height: 3em;
+    padding: 1em 1em .5em 1em;
+}
+	#nav .prev, #nav .next {
+	    display: block;
+	    float: left;
+	    width: 50%;
+	    height: 100%;
+	}
+	#nav .next {
+	    float: right;
+	    text-align: right;
+	}
+	#nav a {
+	    color: #798;
+	    text-decoration: none;
+	    font-family: 'Telex', sans-serif;
+	    font-size: 16px;
+	    font-weight: bold;
+	}
+	#nav a:hover {
+	    text-decoration: none;
+	    color: #466c5b;
+	}
+#tools {
+    float: left;
+    width: 200px;
+    height: 100%;
+    /* border-left: 1px solid #DDD;;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;*/
+    background-color: #FFFAEE;
+}
+	#tools .padder {
+	    margin: .5em 15px 0 20px
+	}
+	#tools .comments {
+	    cursor: pointer;
+	    margin: 20px 0 25px 0;
+	    font-family: 'Telex', sans-serif;
+	}
+.myButton {
+    -moz-box-shadow: inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #ffffff;
+    box-shadow: inset 0px 1px 0px 0px #ffffff;
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+    background: -moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+    background-color: #ededed;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #dcdcdc;
+    display: inline-block;
+    padding: 6px;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #ffffff;
+}
+.myButton:hover {
+    background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
+    background: -moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
+    background-color: #dfdfdf;
+}
+.myButton:active {
+    position: relative;
+    top: 1px;
+}
+.fb-like {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+#tools .maillist {
+    margin-top: 25px;
+    font-family: 'Telex', sans-serif;
+}
+footer {
+    padding: 1em;
+    background-color: #E8E5DF;
+}
+	footer a, footer a:visited {
+	    color: #333
+	}
+	footer div.copyright {
+	    font-size: 12px
+	}
+#comments .close {
+    padding: 3px;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    text-align: right;
+}
+/* not working because noindent is going on the para after where it goes */
+/*#content p.indent {
+        text-indent: 1.5em;
+  }
+  #content li p.indent {
+        text-indent: 0;
+  }*/
+#home #title {
+    text-align: center;
+    margin-bottom: 50px;
+    font-family: 'Lora', sans-serif;
+}
+#home h1 {
+    margin: 1em 0 1em 0;
+    font-size: 28pt;
+    letter-spacing: 1px;
+    font-family: 'Montserrat', san-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #556270;
+}
+#home h2 {
+    margin: 50px 0 10px 2px;
+    font-size: 12pt;
+    font-weight: normal;
+    font-family: 'Montserrat', san-serif;
+    color: #C44D58;
+}
+	#home h2 a:hover {
+	    color: #466c5b
+	}
+	#home h2 a, header h2 a:visited {
+	    color: #83AF9B
+	}
+#home p a {
+    color: #83AF9B
+}
+#content #header {
+    margin-bottom: 25px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #AAA;
+}
+	#content #header h1, #content #header h2 {
+	    float: left;
+	    margin: 0;
+	    font-size: 11pt;
+	    font-weight: normal;
+	    color: #555;
+	}
+	#content #header h2 {
+	    float: right;
+	    font-size: 10pt;
+	    font-weight: normal;
+	    font-family: 'Montserrat', san-serif;
+	    color: #556270;
+	}
+	#content #header a {
+	    font-size: 10pt;
+	    font-weight: normal;
+	    font-family: 'Montserrat', san-serif;
+	    color: #83AF9B;
+	    text-decoration: none;
+	}
+	#content #header a:hover {
+	    color: #466c5b
+	}
+#page-content h1 {
+    line-height: normal;
+    margin: 40px 0 30px 0;
+    font-family: 'Montserrat', san-serif;
+    font-size: 24px;
+    color: #C44D58;
+}
+#page-content h2 {
+    line-height: normal;
+    margin: 40px 0 30px 0;
+    font-family: 'Montserrat', san-serif;
+    font-size: 20px;
+    color: #556270;
+}
+#page-content h3 {
+    line-height: normal;
+    margin: 40px 0 30px 0;
+    font-family: 'Montserrat', san-serif;
+    font-size: 17px;
+    color: #C44D58;
+}
+#page-content h4 {
+    font-size: 15px;
+    font-family: 'Montserrat', san-serif;
+    color: #C44D58;
+    text-transform: none;
+    border-bottom: 2px solid #555555;
+    padding-bottom: 8px;
+}
+#page-content p a {
+    color: #83AF9B
+}
+#page-content p a:hover {
+    color: #466c5b
+}
+#content .figure {
+    margin: 2em
+}
+	#content .figure table {
+	    border: 1px solid black
+	}
+		#content .figure table td {
+		    border: 1px solid black;
+		    padding: 2px;
+		    font-size: 10.5pt;
+		}
+#content .footnote_marker {
+    /* Chrome is messing up position: relative */;
+    font-size: 85%;
+    padding: 3px;
+    color: #C44D58;
+}
+#content blockquote {
+    background-color: #8395a8;
+    padding: .5em;
+    font-family: 'Telex', sans-serif;
+    color: #fff;
+    padding: 20px;
+}
+	#content blockquote p {
+	    color: #fff
+	}
+	#content blockquote .footnote_marker {
+	    color: #eee
+	}
+#title p {
+    margin-top: 10px;
+    margin-bottom: 90px;
+}
+#toc .jspVerticalBar {
+    display: none
+}
+#toc .jspContainer:hover .jspVerticalBar {
+    display: block
+}

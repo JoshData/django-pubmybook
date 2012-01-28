@@ -27,9 +27,9 @@ DEFAULT_BOOK = "mybook"	 				# root directory of book content
 HASHTAG = "myhashtag"					# suggested hashtag, no #-sign
 TWEET = "What a great book."			# suggested tweet
 RELATED_TWITTER_HANDLE = "YourHandle"	# your twitter handle, no @-sign
-GOOGLE_GROUP_NAME = "opengovdatabook"	# name of your Google Group
+GOOGLE_GROUP_NAME = "mybookgroup"		# name of your Google Group
 GOOGLE_ANALYTICS_ID = "UAXXXXXXXX1"		# your Google Analytics ID
-FACEBOOK_APP_ID = "119329904748946"		# your Facebook App ID
+FACEBOOK_APP_ID = "1133344455511"		# your Facebook App ID
 
 You may also specify chapters to embargo (hide from the site) using the chapter
 numbers, e.g.:
