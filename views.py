@@ -48,6 +48,9 @@ def load_book(bookname):
 	class Renderer:
 		pass_through = ("#document", "document", "appendix", "bgroup")
 		skip = ("documentclass", "usepackage", "setdefaultlanguage", "restylefloat", "floatstyle", "makeindex", "newcommand", "tableofcontents", "addcontentsline", "printindex", "Index")
+		
+		# specify either a tag name as a string (e.g. "p")
+		# or a tuple of HTML to wrap around the content (e.g. ("<p>", "</p>")).
 		wrap = {
 			"slash": ("<br/>", ""),
 			"newpage": ("<hr/>", ""),
@@ -62,7 +65,7 @@ def load_book(bookname):
 			"_": ("_", ""),
 			"$": ("$", ""),
 			"%": ("%", ""),
-			"&": ("&", ""),
+			"&": ("&amp;", ""),
 			"#": ("#", ""),
 			" ": (" ", ""),
 			"quotation": "blockquote",
@@ -167,12 +170,20 @@ def load_book(bookname):
 			if node.textContent.strip() == "": return
 			write_raw("</p>")
 		def noindent(self, node):
+			# not working, seems to ocurr *after* the par node
 			self.indent = False
+			
 		def url(self, node):
 			write_raw("<a href=\"")
 			write(node.attributes["url"])
 			write_raw("\" target=\"_blank\">")
 			write(node.attributes["url"])
+			write_raw("</a>")
+		def href(self, node):
+			write_raw("<a href=\"")
+			write(node.attributes["url"])
+			write_raw("\" target=\"_blank\">")
+			write(node.attributes["self"])
 			write_raw("</a>")
 
 		def figure_start(self, node):
@@ -194,7 +205,7 @@ def load_book(bookname):
 			fn = fn.replace(".pdf", "").replace(".png", "")
 			write_raw("<div class='img_container'><img width='100%' src='/" + bookname + "/figure/")
 			write(fn)
-			write("'/></div>")
+			write_raw("'/></div>")
 			node.parentNode.removeChild(node.nextSibling)
 		
 		def footnote_start(self, node):
@@ -293,6 +304,9 @@ def load_book(bookname):
 			})
 		
 	def fill_ref(match):
+		if not match.group(1) in renderer.labels:
+			return "[unknown reference]"
+			
 		section_index, section_number, figure_counter = renderer.labels[match.group(1)]
 		
 		if figure_counter:
@@ -300,7 +314,7 @@ def load_book(bookname):
 		else:
 			text = section_number
 			
-		if section_index not in content_map:
+		if section_index not in content_map or figure_counter:
 			return cgi.escape(text)
 		return str("<a class=\"reference\" href=\"" + cgi.escape(toc[content_map[section_index]]["href"]) + "\">" + cgi.escape(text) + "</a>")
 	
@@ -330,6 +344,7 @@ def page(request, bookname, pagename):
 	
 	return render_to_response('master.html', {
 		"host": request.get_host(),
+		"current_url": request.build_absolute_uri(),
 		"hashtag": settings.HASHTAG,
 		"tweet": settings.TWEET,
 		"related_twitter_handle": settings.RELATED_TWITTER_HANDLE,

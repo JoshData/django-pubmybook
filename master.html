@@ -1,7 +1,8 @@
-<!doctype>
-<!--[if lt IE 7]>  class="no-js ie6 oldie" lang="en"> <![endif]-->
-<!--[if IE 7]>     class="no-js ie7 oldie" lang="en"> <![endif]-->
-<!--[if IE 8]>     class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head itemscope itemtype="http://schema.org/Book">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -12,204 +13,18 @@
 
   <!-- CSS concatenated and minified via ant build script-->
   <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/local.css">
   <link type="text/css" href="/static/css/jquery.jscrollpane.css" rel="stylesheet" media="all" />
   <!-- end CSS-->
 
   <script src="/static/js/libs/modernizr-2.0.6.min.js"></script>
 
-  <style>
-  
-  @import url(http://fonts.googleapis.com/css?family=Arvo:700);
-  @import url(http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic);
-
-  
-  body {
-  	  font-family: 'PT Serif', serif;
-  }
-  header, footer {
-  	  background-color: black;
-  	  color: white;
-  }
-  header {
-  	  padding: 1em;
-  	  text-align: center;
-  }
-  header h1 {
-  	  margin: 0;
-  	  font-size: {% if page %}22pt{% else %}30pt{% endif %};
-  	  font-family: 'Arvo', serif;
-  	  letter-spacing: 1px;
-  }
-  header h2 {
-  	  margin: 10px 0 0 2px;
-  	  font-size: 13pt;
-  	  font-weight: normal;
-  }
-  header h2 a {
-  	  color: black;
-  }
-  header a, header a:visited {
-  	  color: #EEF;
-  }
-  header a {
-  	  text-decoration: none;
-  }
-  header a:hover {
-  	  text-decoration: underline;
-  }
-  #main {
-  	  background-color: white;
-  	  border-top: 1px solid #DDD;
-  	  border-bottom: 1px solid #DDD;
-  }
-  #toc {
-  	  width: 230px;
-  	  height: 100%;
-  	  float: left;
-  	  overflow: auto;
-  	  padding: 0 20px 0 1em;
-  	  border-right: 1px solid #DDD;
-  	  background: #444;
-  	  color: #EEE;
-  	  font-size: 12px;
-  }
-  #toc ul {
-  	  margin: 0;
-  	  padding: 0;
-  }
-  #toc li {
-  	  list-style-type: none;
-  	  margin-bottom: .25em;
-  }
-  #toc li.active {
-  	  background: #666;
-  	  font-weight: bold;
-  	  padding: 2px;
-  }
-  #toc a {
-  	  color: #EEE;
-  	  text-decoration: none;
-  }
-  #toc a:hover {
-  	  color: #FFF;
-  	  text-decoration: underline;
-  }
-  #toc span.num {
-  	  color: #DDD;
-  }
-  #main #content-frame {
-  	  float: left;
-  	  height: 100%;
-  }
-  #content {
-  	  overflow: auto;
-  	  font-size: 10.5pt;
-  	  line-height: 140%;
-  	  text-align: justify;
-  	  padding: 1.5em 15px 2.5em 25px;
-  	  margin-right: 40px;
-  }
-  #content .footnotes {
-  	  margin-top: 15px;
-  	  border-top: 1px solid black;
-  	  padding-top: 10px;
-  	  font-size: 9pt;
-  }
-  #content .footnote_entry {
-  	  display: block;
-  }
-  #nav {
-  	  height: 2em;
-  	  border-top: 1px solid #DDD;
-  	  padding: .5em 1em .5em 1em;
-  	  vertical-align: middle;
-  }
-  #nav .prev, #nav .next {
-  	  width: 50%;
-  	  height: 100%;
-  }
-  #nav .next {
-  	  float: right;
-  	  text-align: right;
-  }
-  #nav a {
-  	  color: black;
-  	  text-decoration: none;
-  }
-  #nav a:hover {
-  	  text-decoration: underline;
-  }
-  #tools {
-  	  float: left;
-  	  width: 160px;
-  	  height: 100%;
-  	  border-left: 1px solid #DDD;
-  }
-  #tools .padder {
-  	  margin: .5em 5px 0 10px;
-  }
-  #tools .comments {
-  	  cursor: pointer;
-  	  margin: 20px 0 25px 0;
-  }
-  .fb-like {
-  	  margin-top: 15px;
-  	  margin-bottom: 15px;
-  }
-  #tools .maillist {
-  	  margin-top: 25px;
-  }
-  footer {
-  	  padding: 1em;
-  }
-  footer a, footer a:visited {
-  	  color: white;
-  }
-  footer div.copyright {
-  	  font-size: 12px;
-  }
-  #comments .close {
-  	  padding: 3px;
-  	  font-family: Arial, sans-serif;
-  	  cursor: pointer;
-  	  text-align: right;
-  }
-  
-  #content p.indent {
-  	  text-indent: 1.5em;
-  }
-  #content li p.indent {
-  	  text-indent: 0;
-  }
-  #content .figure {
-  	  margin: 2em;
-  }
-  #content .figure table {
-  	  border: 1px solid black;
-  }
-  #content .figure table td {
-  	  border: 1px solid black;
-  	  padding: 2px;
-  	  font-size: 10.5pt;
-  }
-  #content .footnote_marker {
-  	  /* Chrome is messing up position: relative */
-  	  font-size: 85%;
-  	  padding: 3px;
-  	  color: #555;
-  }
-  
-  #toc .jspVerticalBar { display: none; }
-  #toc .jspContainer:hover .jspVerticalBar { display: block; }
-  
-  </style>
 </head>
 
 <body>
 
   <div id="container">
     <header>
-    	{% include "header.html" %}
     </header>
     <div id="main" role="main">
     	<div id="toc">
@@ -231,26 +46,34 @@
     		<div id="content">
     			<div class="wrapper">
     				{% if page %}
-    					{{page.content|safe}}
+    					<div id="header">
+							{% include "header.html" %}
+							<div style="clear: both"> </div>
+						</div>
+						<div id="page-content">
+    						{{page.content|safe}}
+    					</div>
     				{% else %}
-    					{% include "home.html" %}
+    					<div id="home">
+    						{% include "home.html" %}
+    					</div>
     				{% endif %}
     			</div>
     		</div>
     		<div id="nav">
-    			{% if prev %}<a class="prev" href="{{prev.href}}">{{prev.name}}</a>{% endif %}
-    			{% if next %}<a class="next" href="{{next.href}}">{{next.name}}</a>{% endif %}
+    			{% if prev %}<a class="prev" href="{{prev.href}}">&lt; {{prev.name}}</a>{% endif %}
+    			{% if next %}<a class="next" href="{{next.href}}">{{next.name}} &gt;</a>{% endif %}
     		</div>
     	</div>
     	
 		<div id="tools">
 			<div class="padder">
-				<div class="comments">
+				<div class="comments myButton">
 					Read <fb:comments-count href="http://{{host}}"/></fb:comments-count> comments or add a comment on this
 					book.
 				</div>
-	
-				<a href="https://twitter.com/intent/tweet?button_hashtag={{hashtag|urlencode}}&text={{tweet|urlencode}}" class="twitter-hashtag-button" data-related="{{related_twitter_handle}}" data-url="http://{{host}}">Tweet #{{hashtag}}</a>
+
+				<a href="https://twitter.com/intent/tweet?button_hashtag={{hashtag|urlencode}}&text={{tweet|urlencode}}" class="twitter-hashtag-button" data-related="{{related_twitter_handle}}" data-url="{{current_url}}">Tweet #{{hashtag}}</a>
 				
 				<div class="fb-like" data-send="false" data-layout="button_count" data-width="133" data-show-faces="false" data-action="like" data-font="verdana"></div>
 				
@@ -332,7 +155,7 @@ function layout() {
 	var toc = $('#toc');
 	var contentframe = $('#content-frame');
 	var tools = $('#tools');
-	contentframe.css({width: $(window).width() - toc.outerWidth() - tools.outerWidth()});
+	contentframe.css({width: $(window).width() - toc.outerWidth() - tools.outerWidth() - 1});
 	
 	$('#content').css({height: contentframe.height() - $('#nav').outerHeight() });
 	
