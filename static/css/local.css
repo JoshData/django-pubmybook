@@ -217,6 +217,7 @@ footer {
     text-transform: uppercase;
     font-weight: bold;
     color: #556270;
+    line-height: normal;
 }
 #home h2 {
     margin: 50px 0 10px 2px;
