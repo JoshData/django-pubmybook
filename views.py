@@ -7,7 +7,7 @@ from django.template import RequestContext
 from django.conf import settings
 
 import re
-import os.path
+import os, os.path
 import tempfile, shutil, subprocess
 
 books = { }
@@ -16,16 +16,23 @@ def load_book(bookname):
 	if bookname in books:
 		return
 	
+	book_root = os.path.dirname(__file__) + "/books/" + bookname
+	if not os.path.exists(book_root):
+		raise Http404()
+
+	mtime = os.stat(book_root + "/book.tex").st_mtime
+	
+	book_data = cache.get(book_root)
+	if book_data and book_data[0] == mtime:
+		books[bookname] = book_data[1]
+		return
+
 	from plasTeX import Command
 	from plasTeX.TeX import TeX
 	from plasTeX.DOM import Node
 	from cStringIO import StringIO
 	from django.template.defaultfilters import slugify
 	
-	book_root = os.path.dirname(__file__) + "/books/" + bookname
-	if not os.path.exists(book_root):
-		raise Http404()
-
 	doc = TeX(file=book_root + "/book.tex").parse()
 	doc.normalize()
 		
@@ -107,9 +114,9 @@ def load_book(bookname):
 			return self.counters[counter]
 		
 		def title(self, node):
-			self.metadata[node.nodeName] = node.textContent
+			self.metadata[node.nodeName] = node.textContent + "" # convert from DOM.Text to unicode
 		def author(self, node):
-			self.metadata[node.nodeName] = node.textContent
+			self.metadata[node.nodeName] = node.textContent + "" # convert from DOM.Text to unicode
 		def maketitle(self, node):
 			write_raw("<h1>")
 			write(self.metadata.get("title", ""))
@@ -128,7 +135,7 @@ def load_book(bookname):
 					bookcontent.append((
 						node.nodeName,
 						list(self.counters.get(x, None) for x in self.counter_order),
-						node.attributes.get("title", "").textContent,
+						node.attributes.get("title", "").textContent+"", # convert from DOM.Text to unicode
 						buf,
 						[],
 					))
@@ -138,7 +145,7 @@ def load_book(bookname):
 					bookcontent[-1][4].append( (
 						node.nodeName,
 						list(self.counters.get(x, None) for x in self.counter_order),
-						node.attributes.get("title", "").textContent,
+						node.attributes.get("title", "").textContent+"", # convert from DOM.Text to unicode
 						) )
 
 			write_raw("<%s>" % elemname)
@@ -174,6 +181,7 @@ def load_book(bookname):
 			self.indent = False
 			
 		def url(self, node):
+			if "url" not in node.attributes: raise Exception(repr(node))
 			write_raw("<a href=\"")
 			write(node.attributes["url"])
 			write_raw("\" target=\"_blank\">")
@@ -201,7 +209,7 @@ def load_book(bookname):
 			write_raw("</p>")
 		def graphic(self, node):
 			# use \newcommand{\includegraphics}[2][]{\graphic #2}
-			fn = node.nextSibling.textContent
+			fn = node.nextSibling.textContent+"" # convert from DOM.Text to unicode
 			fn = fn.replace(".pdf", "").replace(".png", "")
 			write_raw("<div class='img_container'><img width='100%' src='/" + bookname + "/figure/")
 			write(fn)
@@ -322,6 +330,9 @@ def load_book(bookname):
 		entry["content"] = re.sub("<reference>(.*?)</reference>", fill_ref, entry["content"])
 		
 	books[bookname] = { "pages": book_pages, "toc": toc }
+	
+	cache.set(book_root, (mtime, books[bookname]), 60*60*24*7) # cache seven days
+	
 	
 def page(request, bookname, pagename):
 	if bookname == "":
