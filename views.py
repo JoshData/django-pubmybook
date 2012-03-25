@@ -74,6 +74,7 @@ def load_book(bookname):
 			"%": ("%", ""),
 			"&": ("&amp;", ""),
 			"#": ("#", ""),
+			"active::~": ("&nbsp;", ""),
 			" ": (" ", ""),
 			"quotation": "blockquote",
 			"center": "center",
@@ -91,6 +92,7 @@ def load_book(bookname):
 			"active::_": "sub",
 			"ldots": (" . . . ", ""),
 			"textasciitilde": ("~", ""),
+			"rule": ("<hr/>", ""),
 		}
 		
 		def __init__(self):
@@ -181,7 +183,7 @@ def load_book(bookname):
 			self.indent = False
 			
 		def url(self, node):
-			if "url" not in node.attributes: raise Exception(repr(node))
+			if "url" not in node.attributes: raise Exception("\\url without url attribute: " + node.toXML())
 			write_raw("<a href=\"")
 			write(node.attributes["url"])
 			write_raw("\" target=\"_blank\">")
@@ -191,7 +193,7 @@ def load_book(bookname):
 			write_raw("<a href=\"")
 			write(node.attributes["url"])
 			write_raw("\" target=\"_blank\">")
-			write(node.attributes["self"])
+			write(node.attributes["self"] if node.attributes["self"] else "???")
 			write_raw("</a>")
 
 		def figure_start(self, node):
@@ -238,7 +240,7 @@ def load_book(bookname):
 			write_raw("<reference>")
 			write_raw(lab)
 			write_raw("</reference>")
-		
+			
 	renderer = Renderer()
 
 	def process_node(node):
@@ -371,12 +373,16 @@ def page(request, bookname, pagename):
 	}, context_instance=RequestContext(request))
 
 def figure(request, bookname, figurename):
-	for ext in ('png', 'pdf'):
+	for ext in ('png', 'jpg', 'jpeg', 'pdf'):
 		fn = os.path.dirname(__file__) + "/books/" + bookname + "/" + figurename + "." + ext
 		if not os.path.exists(fn): continue
 		
 		if ext == "png":
 			resp = HttpResponse(content_type="image/png")
+			resp.write(open(fn).read())
+			return resp
+		if ext in ("jpg", "jpeg"):
+			resp = HttpResponse(content_type="image/jpeg")
 			resp.write(open(fn).read())
 			return resp
 			

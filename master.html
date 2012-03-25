@@ -146,6 +146,7 @@
 	</script>
 	
   <script>
+var throttleTimeout = null;
 function layout() {
 	var header = $('header');
 	var main = $('#main');
@@ -180,8 +181,9 @@ function layout() {
 $(document).ready(function() {
    $('#toc, #content').jScrollPane();
    layout();
+   layout(); // it takes two calls  to get this right??
    $(window).resize(layout);
-   setTimeout("layout()", 1000);
+   setTimeout("layout()", 1000); // still need this really
      
    // move footnotes from inline to the bottom
    
@@ -209,6 +211,7 @@ $(document).ready(function() {
    $('#comments .close').click(function() {
    		$("#comments").animate({ left: $(window).width() }).fadeOut();
    });
+   
 });
  </script>
 </body>

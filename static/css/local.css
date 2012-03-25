@@ -10,9 +10,10 @@ body {
 header, footer, #toc {
     background-color: #FDF8EC;
     color: #404045;
+    clear: both;
 }
 header {
-    padding: 1em;
+    padding: 1em;ma
     text-align: center;
 }
 p {
@@ -23,7 +24,7 @@ p {
     color: #555555;
 }
 #toc {
-    width: 230px;
+    width: 190px;
     height: 100%;
     float: left;
     overflow: auto;
@@ -129,8 +130,8 @@ p {
 	    color: #466c5b;
 	}
 #tools {
-    float: left;
-    width: 200px;
+    float: right;
+    width: 190px;
     height: 100%;
     /* border-left: 1px solid #DDD;;
     border-top: 1px solid black;
@@ -139,7 +140,7 @@ p {
     background-color: #FFFAEE;
 }
 	#tools .padder {
-	    margin: .5em 15px 0 20px
+	    margin: .5em 15px 0 10px
 	}
 	#tools .comments {
 	    cursor: pointer;
