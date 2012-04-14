@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import re, cgi
+import re, cgi, os.path
 from cStringIO import StringIO
 
 from plasTeX import Command
@@ -9,11 +9,12 @@ from plasTeX.DOM import Node
 
 from django.template.defaultfilters import slugify
 
-def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_page=lambda x : x, skip_prologue=False):
+def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : x, make_url_to_figure=lambda x : x, skip_prologue=False, footnotes_inline=False, toc_placeholder="", condense_simple_sections=False):
 	doc = TeX(file=texfilename).parse()
 	doc.normalize()
 		
 	bookcontent = []
+	context = { "is_in_footnotes": False, "fnid": 0 }
 	
 	re_url = re.compile(r"(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
 	
@@ -23,13 +24,16 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 		s = s.encode("utf8")
 		if escape:
 			s = cgi.escape(s)
-		bookcontent[-1][3].write(s)
+		if not context["is_in_footnotes"]:
+			bookcontent[-1][3].write(s)
+		else:
+			bookcontent[-1][5].write(s)
 	def write_raw(s):
 		write(s, escape=False)
 	
 	class Renderer:
-		pass_through = ("#document", "document", "appendix", "bgroup")
-		skip = ("documentclass", "usepackage", "setdefaultlanguage", "restylefloat", "floatstyle", "makeindex", "newcommand", "tableofcontents", "addcontentsline", "printindex", "Index")
+		pass_through = ("#document", "document", "appendix", "bgroup", "titlepage")
+		skip = ("documentclass", "usepackage", "setdefaultlanguage", "restylefloat", "floatstyle", "makeindex", "newcommand", "addcontentsline", "printindex", "Index", "midrule", "newif", "newenvironment", "minipage", "vfill", "vspace", "plastexfalse")
 		
 		# specify either a tag name as a string (e.g. "p")
 		# or a tuple of HTML to wrap around the content (e.g. ("<p>", "</p>")).
@@ -42,6 +46,7 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 			"underline": "u",
 			"textbf": "b",
 			"bf": "b",
+			"bfseries": "b",
 			"tt": "tt",
 			"bigskip": ("<p>&nbsp;</p>", ""),
 			"_": ("_", ""),
@@ -68,6 +73,9 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 			"ldots": (" . . . ", ""),
 			"textasciitilde": ("~", ""),
 			"rule": ("<hr/>", ""),
+			"-": ("", ""), # discretionary hyphen
+			"copyright": ("&copy;", ""),
+			"cleardoublepage": ("<hr>/", ""),
 		}
 		
 		def __init__(self):
@@ -107,7 +115,7 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 			
 			if is_numbered:
 				section_number = str(self.next_counter(node.nodeName)) + ". "
-				if self.has_par_content:
+				if self.has_par_content or not condense_simple_sections:
 					buf = StringIO()
 					bookcontent.append((
 						node.nodeName,
@@ -115,6 +123,7 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 						node.attributes.get("title", "").textContent+"", # convert from DOM.Text to unicode
 						buf,
 						[],
+						StringIO(), # footnotes
 					))
 					self.has_par_content = False
 				else:
@@ -139,6 +148,9 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 			self.heading_start(node, "h3")
 		def subsubsection_start(self, node):
 			self.heading_start(node, "h4")
+			
+		def tableofcontents(self, node):
+			write_raw(toc_placeholder)
 
 		def index(self, node):
 			pass
@@ -156,6 +168,30 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 		def noindent(self, node):
 			# not working, seems to ocurr *after* the par node
 			self.indent = False
+		def small_start(self, node):
+			write_raw("<span style='font-size: 85%'>") # don't know if we are wrapping block level or inline content
+		def small_end(self, node):
+			write_raw("</span>")
+		def large_start(self, node):
+			write_raw("<span style='font-size: 115%'>") # don't know if we are wrapping block level or inline content
+		def large_end(self, node):
+			write_raw("</span>")
+		def Large_start(self, node):
+			write_raw("<span style='font-size: 125%'>") # don't know if we are wrapping block level or inline content
+		def Large_end(self, node):
+			write_raw("</span>")
+		def huge_start(self, node):
+			write_raw("<span style='font-size: 150%'>") # don't know if we are wrapping block level or inline content
+		def huge_end(self, node):
+			write_raw("</span>")
+		def textsc_start(self, node):
+			write_raw("<span style='font-variant:small-caps;'>") # don't know if we are wrapping block level or inline content
+		def textsc_end(self, node):
+			write_raw("</span>")
+		def footnotesize_start(self, node):
+			write_raw("<span style='font-size: 80%'>") # don't know if we are wrapping block level or inline content
+		def footnotesize_end(self, node):
+			write_raw("</span>")
 			
 		def url(self, node):
 			if "url" not in node.attributes: raise Exception("\\url without url attribute: " + node.toXML())
@@ -188,19 +224,29 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 			# use \newcommand{\includegraphics}[2][]{\graphic #2}
 			fn = node.nextSibling.textContent+"" # convert from DOM.Text to unicode
 			fn = fn.replace(".pdf", "").replace(".png", "")
-			write_raw("<div class='img_container'><img width='100%' src='" + figure_root)
-			write(fn)
+			write_raw("<div class='img_container'><img width='100%' src='")
+			write(make_url_to_figure(fn))
 			write_raw("'/></div>")
 			node.parentNode.removeChild(node.nextSibling)
 		
 		def footnote_start(self, node):
 			c = self.next_counter("footnote")
-			write_raw("<span class='footnote_marker' title='")
-			write(node.textContent)
-			write_raw("'>[" + str(c) + "]</span>")
-			write_raw("<span id='footnote_" + str(c) + "' class='footnote_entry' style='display: none'>" + str(c) + ". ")
+			if footnotes_inline:
+				write_raw("<span class='footnote_marker' title='")
+				write(node.textContent)
+				write_raw("'>[" + str(c) + "]</span>")
+				write_raw("<span id='footnote_" + str(c) + "' class='footnote_entry' style='display: none'>" + str(c) + ". ")
+			else:
+				write_raw("<a name='fn_" + str(context["fnid"]) + "_anchor'></a><sup><a href='#fn_" + str(context["fnid"]) + "_note'>" + str(c) + "</a></sup>")
+				context["is_in_footnotes"] = True
+				write_raw("<p style='font-size: 90%'><a name='fn_" + str(context["fnid"]) + "_note'></a><a href='#fn_" + str(context["fnid"]) + "_anchor'>" + str(c) + "</a>. ")
+				context["fnid"] += 1
 		def footnote_end(self, node):
-			write_raw("</span>")
+			if footnotes_inline:
+				write_raw("</span>")
+			else:
+				write_raw("</p>")
+				context["is_in_footnotes"] = False
 			
 		def label(self, node):
 			# store a tuple to the index of the book segment we are in (for generating links),
@@ -242,6 +288,7 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 				return
 			else:
 				write_raw("<p>UNHANDLED NODE: ")
+				write(node.nodeName + ": ")
 				write(node.toXML())
 				write_raw("</p>\n")
 				
@@ -257,7 +304,7 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 			elif hasattr(renderer, nodeName + "_end"):
 				getattr(renderer, nodeName + "_end")(node)
 				
-	bookcontent.append( (None, ["prologue"], None, StringIO(), []) )
+	bookcontent.append( (None, ["prologue"], None, StringIO(), [], StringIO()) )
 	process_node(doc)
 	
 	content_map = { }
@@ -280,6 +327,7 @@ def latex_to_html(texfilename, figure_root, embargo_chapters=[], make_url_to_pag
 			"name": entry[2],
 			"href": make_url_to_page(entrypagename),
 			"content": entry[3].getvalue(),
+			"footnotes": entry[5].getvalue(),
 			"extraneous_entries": [{
 					"indent": len([e for e in e2[1] if e != None]),
 					"number": ".".join([str(e) for e in e2[1] if e != None]),
@@ -320,12 +368,36 @@ if __name__ == "__main__":
 	</head>
 	<body>
 """
-		
-		ret = latex_to_html(sys.argv[1], "")
-		for section in ret["toc"]:
-			print section["content"]
+		def make_url_to_figure(fn):
+			fn = fn.strip()
+			for ext in ('png', 'jpg', 'jpeg', 'pdf'):
+				if os.path.exists(fn + "." + ext):
+					return fn + "." + ext
+			raise ValueError("Figure not found: " + fn)
 			
-		print """
+		ret = latex_to_html(sys.argv[1], make_url_to_figure=make_url_to_figure, toc_placeholder="<TABLE_OF_CONTENTS/>")
+		
+		toc = "<h1>Contents</h1><ul>"
+		for i, section in enumerate(ret["toc"]):
+			if section["name"]:
+				toc += """	<li style="margin-left: %dem"><a href="#chapter_%d">%s. %s</a></li>""" % (section["indent"] - 1, i, section["number"].encode("utf8"), section["name"].encode("utf8"))
+		toc += "</ul>\n\n"
+		
+		output = ""
+		for i, section in enumerate(ret["toc"]):
+			output += """<a name="chapter_%d"> </a>""" % i
+			output += section["content"]
+			
+			if section["footnotes"].strip() != "":
+				output += "<hr/>"
+				output += section["footnotes"]
+			
+		output += """
 </body>
 </html>
 """
+
+		output = output.replace("<TABLE_OF_CONTENTS/>", toc)
+		
+		print output
+		

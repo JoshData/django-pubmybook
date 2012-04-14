@@ -26,10 +26,12 @@ def load_book(bookname):
 		return
 
 	books[bookname] = latextohtml(book_root + "/book.tex",
-		"/" + bookname + "/figure/",
 		embargo_chapters=settings.EMBARGO_CHAPTERS.get(bookname, []),
 		make_url_to_page=lambda pagename : "/" + bookname + "/page/" + pagename,
-		skip_prologue = True)
+		make_url_to_figure=lambda fn : "/" + bookname + "/figure/" + fn,
+		skip_prologue = True,
+		footnotes_inline=True,
+		condense_simple_sections=True)
 
 	cache.set(book_root, (mtime, books[bookname]), 60*60*24*7) # cache seven days
 	
