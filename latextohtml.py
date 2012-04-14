@@ -38,9 +38,9 @@ def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : 
 		# specify either a tag name as a string (e.g. "p")
 		# or a tuple of HTML to wrap around the content (e.g. ("<p>", "</p>")).
 		wrap = {
-			"slash": ("<br/>", ""),
-			"newpage": ("<hr/>", ""),
-			"clearpage": ("<hr/>", ""),
+			"slash": ("\n<br/>", ""),
+			"newpage": ("\n<hr/>", ""),
+			"clearpage": ("\n<hr/>", ""),
 			"emph": "i",
 			"it": "i",
 			"underline": "u",
@@ -48,7 +48,7 @@ def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : 
 			"bf": "b",
 			"bfseries": "b",
 			"tt": "tt",
-			"bigskip": ("<p>&nbsp;</p>", ""),
+			"bigskip": ("\n\n<p>&nbsp;</p>", ""),
 			"_": ("_", ""),
 			"$": ("$", ""),
 			"%": ("%", ""),
@@ -56,9 +56,9 @@ def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : 
 			"#": ("#", ""),
 			"active::~": ("&nbsp;", ""),
 			" ": (" ", ""),
-			"quotation": "blockquote",
-			"center": "center",
-			"centering": "center",
+			"quotation": ("\n<blockquote>", "</blockquote>"),
+			"center": ("\n<center>", "</center>"),
+			"centering": ("\n<center>", "</center>"),
 			"hspace": ("<span>&nbsp; &nbsp;</span>", ""),
 			"enumerate": "ol",
 			"itemize": "ul",
@@ -75,7 +75,7 @@ def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : 
 			"rule": ("<hr/>", ""),
 			"-": ("", ""), # discretionary hyphen
 			"copyright": ("&copy;", ""),
-			"cleardoublepage": ("<hr>/", ""),
+			"cleardoublepage": ("<hr/>", ""),
 		}
 		
 		def __init__(self):
@@ -159,7 +159,7 @@ def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : 
 			if self.hold_par: return
 			if node.textContent.strip() == "": return
 			self.has_par_content = True
-			write_raw("<p class='%s'>" % ("indent" if self.indent else "noindent"))
+			write_raw("\n<p class='%s'>" % ("indent" if self.indent else "noindent"))
 			self.indent = True
 		def par_end(self, node):
 			if self.hold_par: return
@@ -214,6 +214,7 @@ def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : 
 			self.cur_figure = None
 			write_raw("</div>")
 		def caption_start(self, node):
+			if self.hold_par: raise Exception("Nested captions.")
 			self.hold_par = True
 			write_raw("<p class='caption'>")
 			write("Figure " + str(self.counters.get("figure", "?")) + ". ")
@@ -227,7 +228,10 @@ def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : 
 			write_raw("<div class='img_container'><img width='100%' src='")
 			write(make_url_to_figure(fn))
 			write_raw("'/></div>")
-			node.parentNode.removeChild(node.nextSibling)
+			# The next sibling has a text node with the image filename. I'm
+			# not sure where it is coming from. Clear it out. Removing the
+			# node somehow causes a parent <p> to not be closed.
+			return "IGNORE_NEXT_SIBLING"
 		
 		def footnote_start(self, node):
 			c = self.next_counter("footnote")
@@ -237,7 +241,7 @@ def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : 
 				write_raw("'>[" + str(c) + "]</span>")
 				write_raw("<span id='footnote_" + str(c) + "' class='footnote_entry' style='display: none'>" + str(c) + ". ")
 			else:
-				write_raw("<a name='fn_" + str(context["fnid"]) + "_anchor'></a><sup><a href='#fn_" + str(context["fnid"]) + "_note'>" + str(c) + "</a></sup>")
+				write_raw("<a name='fn_" + str(context["fnid"]) + "_anchor'></a><sup style='font-size: 75%'><a href='#fn_" + str(context["fnid"]) + "_note'>" + str(c) + "</a></sup>")
 				context["is_in_footnotes"] = True
 				write_raw("<p style='font-size: 90%'><a name='fn_" + str(context["fnid"]) + "_note'></a><a href='#fn_" + str(context["fnid"]) + "_anchor'>" + str(c) + "</a>. ")
 				context["fnid"] += 1
@@ -284,16 +288,19 @@ def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : 
 			elif hasattr(renderer, nodeName + "_start"):
 				getattr(renderer, nodeName + "_start")(node)
 			elif hasattr(renderer, nodeName):
-				getattr(renderer, nodeName)(node)
-				return
+				return getattr(renderer, nodeName)(node)
 			else:
 				write_raw("<p>UNHANDLED NODE: ")
 				write(node.nodeName + ": ")
 				write(node.toXML())
 				write_raw("</p>\n")
 				
+			cmd = None
 			for child in node:
-				process_node(child)
+				if cmd == "IGNORE_NEXT_SIBLING":
+					cmd = None
+					continue
+				cmd = process_node(child)
 				
 			if nodeName in renderer.wrap:
 				w = renderer.wrap[nodeName]
@@ -302,7 +309,7 @@ def latex_to_html(texfilename, embargo_chapters=[], make_url_to_page=lambda x : 
 				else:
 					write_raw("</" + w + ">")
 			elif hasattr(renderer, nodeName + "_end"):
-				getattr(renderer, nodeName + "_end")(node)
+				return getattr(renderer, nodeName + "_end")(node)
 				
 	bookcontent.append( (None, ["prologue"], None, StringIO(), [], StringIO()) )
 	process_node(doc)
@@ -365,6 +372,10 @@ if __name__ == "__main__":
 <html>
 	<head>
 		<meta charset="UTF-8" />
+		<style>
+			h1 { page-break-before: always; }
+			h1, h2, h3, h4, h5, h6 { margin: 1em; }
+		</style>
 	</head>
 	<body>
 """
